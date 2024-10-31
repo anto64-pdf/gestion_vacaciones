@@ -1,0 +1,12 @@
+.alta-empleado input[type='number'], 
+input[type='text'], 
+input[type='password']{
+    width: 15rem;
+    height: 3rem;
+    margin: 1rem;
+}
+.alta-empleado{
+    background-color: lightpink;
+    border-radius: 20px;
+    width: 100vh;
+}

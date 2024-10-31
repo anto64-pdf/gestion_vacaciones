@@ -1,0 +1,16 @@
+.navBar {
+    width: 100%;
+    position: fixed;
+    z-index: 25;
+    top: 0;
+    left: 0;
+}
+
+.App .navBarName {
+    left: 1rem;
+    text-align: left;
+}
+
+.navBar button:hover {
+    background-color: rgb(136, 42, 116);
+}
