@@ -75,7 +75,8 @@ function ListaPeticiones() {
             <th>Estado</th>
             <th>Desde</th>
             <th>Hasta</th>
-            <th>Total Dias</th>
+            <th>Dias pedidos</th>
+            <th>Dias Restantes</th>
           </tr>
         </thead>
         <tbody >
@@ -87,6 +88,7 @@ function ListaPeticiones() {
               <TableCell>{new Date(row.fecha_Inicio).toLocaleDateString()}</TableCell>
               <TableCell>{new Date(row.fecha_fin).toLocaleDateString()}</TableCell>
               <TableCell>{row.cant_dias}</TableCell>
+              <TableCell>{row.cant_dias_vacaciones}</TableCell>
             </TableRow>))}
         </tbody>
       </table>

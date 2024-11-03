@@ -3,6 +3,7 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
+import '../estilos/tabla.css'
 function ListadoEmpleados() {
   const navigate = useNavigate();
   const handleVolver = () => {
@@ -11,14 +12,16 @@ function ListadoEmpleados() {
   const [selectedRowId, setSelectedRowId] = React.useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [mostrarModif, setmostrarModif] = useState(false);
-const initialInputValues = {
-  id_empleado:0,
-  nombre_empleado:'',
-  apellido_empleado: '',
-  antiguedad: '',
-  usuario: '',
-  clave: ''
-};
+  const initialInputValues = {
+    name: '',
+    lastName: '',
+    antiguedad: 0,
+    user: '',
+    password: '',
+    cargo:'', 
+    diasRestantes:''
+  };
+
 const [inputs, setInputs] = useState(initialInputValues);
 const [lista,setLista]=useState([])
 const handleInputChange = (event) => {
@@ -96,24 +99,30 @@ const handleEliminarUsuario=async (id)=>{
   return (
     <div>
       <table style={{backgroundColor:'lightpink'}} className='tabla-peticiones'>
-        <thead>
-          <tr >
+        <thead >
+          <tr>
             <th>Nombre</th>
             <th>Apellido</th>
+            <th>Antiguedad</th>
+            <th>Departamento</th>
+            <th>Dias Resatntes Vacaciones</th>
             <th>Usuario</th>
             <th>Contraseña</th>
           </tr>
         </thead>
-        <tbody >
+        <tbody>
         {lista.map((row) => ( 
-          <TableRow key={row.id_empleado} onClick={() => handleRowClick(row)} style={{ cursor: 'pointer'}} className='file-employees'> 
-          <TableCell>{row.nombre_empleado}</TableCell> 
-          <TableCell>{row.apellido_empleado}</TableCell> 
-          <TableCell>{row.usuario}</TableCell> 
-          <TableCell>{row.clave}</TableCell> 
-          <button style={{margin:'0 2rem'}} onClick={(e) => { e.stopPropagation();setmostrarModif(true); setInputs(row)}}>Modificar usuario</button>
+          <tr key={row.id_empleado} onClick={() => handleRowClick(row)} style={{ cursor: 'pointer'}} className='file-employees'> 
+          <td >{row.nombre_empleado}</td> 
+          <td >{row.apellido_empleado}</td> 
+          <td >{row.antiguedad}</td> 
+          <td >{row.departamento}</td> 
+          <td >{row.cant_dias_vacaciones}</td> 
+          <td >{row.usuario}</td> 
+          <td >{row.clave}</td> 
+          <button style={{margin:'0 2rem'}} onClick={(e) => { e.stopPropagation();setmostrarModif((prev)=>!prev); setInputs(row)}}>Modificar usuario</button>
           <button onClick={(e) => { e.stopPropagation(); handleEliminarUsuario(row.id_empleado); }}>Eliminar usuario</button>
-          </TableRow> ))
+          </tr> ))
           }
         </tbody>
       </table>

@@ -23,40 +23,8 @@ db.connect(err => {
   console.log('Conectado a la base de datos MySQL.');
 });
 
-//empleados
-app.post('/loginEmpleado', (req, res) => {
-  const user = req.body.user
-  const password = req.body.password
-  //const { user, password } = req.body;
-  console.log("credenciales:" + user + password)
-  db.query('SELECT * FROM empleados WHERE usuario = ? AND clave = ?', [user, password], (err, results) => {
-    if (err) {
-      return res.status(500).json({ success: false, message: 'Error en la consulta' });
-    }
+//peticiones
 
-    if (results.length > 0) {
-
-      return res.json({ success: true, user: results[0] });
-    } else {
-      return res.json({ success: false, message: 'Credenciales incorrectas' });
-    }
-  });
-});
-app.post('/createEmployee', (req, res) => {
-  const { name, lastname, antiguedad, user, password } = req.body;
-  console.log(name + lastname + antiguedad + user + password)
-  db.query('INSERT INTO `empleados`(`nombre_empleado`, `apellido_empleado`, `antiguedad`, `usuario`, `clave`) VALUES (?, ?, ?, ?, ?)',
-    [name, lastname, antiguedad, user, password], (err, results) => {
-      if (err) {
-        return res.status(500).json({ success: false, message: 'Error en la consulta' });
-      }
-      if (results.affectedRows > 0) {
-        return res.json({ success: true, message: 'Empleado creado exitosamente' });
-      }
-      else { return res.status(400).json({ success: false, message: 'No se pudo crear el empleado' }); }
-    }
-  );
-});
 app.post('/createPetition', (req, res) => {
   const { startDate, endDate, days, state } = req.body;
   console.log(startDate, endDate, days, state)
@@ -92,10 +60,9 @@ app.post('/createPetitionEmployee', (req, res) => {
   );
 });
 
-// peticiones
 app.get('/listaPeticiones', (req, res) => {
   const body = req.body
-  db.query('SELECT empleados.nombre_empleado, empleados.apellido_empleado, peticiones.cant_dias, ' +
+  db.query('SELECT empleados.nombre_empleado, empleados.apellido_empleado, peticiones.cant_dias, empleados.cant_dias_vacaciones ' +
     'peticiones.id_peticion, peticiones.estado, peticiones.fecha_Inicio, peticiones.fecha_fin from empleados ' +
     'INNER JOIN empleados_peticiones ON empleados.id_empleado=empleados_peticiones.id_empleado ' +
     'INNER JOIN peticiones ON empleados_peticiones.id_peticion=peticiones.id_peticion', (err, results) => {
@@ -152,7 +119,49 @@ app.post('/EstadoPeticion', (req, res) => {
     });
 });
 
+// app.post('/DiasRestantes', (req, res) => {
+//   const {empleadoId } = req.body
+//   const pendiente='pendiente', aceptada="Aceptada";
+//   console.log(empleadoId)
+//   db.query('SELECT SUM(peticiones.cant_dias) AS dias_restantes from peticiones '+
+//     'INNER JOIN empleados_peticiones ON peticiones.id_peticion=empleados_peticiones.id_peticion '+ 
+//     'INNER JOIN empleados on empleados_peticiones.id_empleado=empleados.id_empleado '+
+//     'WHERE empleados.id_empleado=? AND (peticiones.estado=? || peticiones.estado=?) '+
+//     [empleadoId, pendiente, aceptada], (err, results) => {
+//       if (err) {
+//         return res.status(500).json({ success: false, message: 'Error en la consulta' });
+//       }
+     
+//       if (results.length > 0) {
+//         console.log('Resultados de la actualización:', results);
+//         return res.json({ success: true, peticiones:results});
+//       } else {
+//         return res.json({ success: false, message: 'Credenciales incorrectas' });
+//       }
+//     });
+// });
+
 //empleados
+
+app.post('/loginEmpleado', (req, res) => {
+  const user = req.body.user
+  const password = req.body.password
+  //const { user, password } = req.body;
+  console.log("credenciales:" + user + password)
+  db.query('SELECT * FROM empleados WHERE usuario = ? AND clave = ?', [user, password], (err, results) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: 'Error en la consulta' });
+    }
+
+    if (results.length > 0) {
+
+      return res.json({ success: true, user: results[0] });
+    } else {
+      return res.json({ success: false, message: 'Credenciales incorrectas' });
+    }
+  });
+});
+
 app.get('/listaEmpleados', (req, res) => {
   const body = req.body
   db.query('SELECT * FROM `empleados`', (err, results) => {
@@ -205,10 +214,27 @@ app.post('/EliminarEmpleado', (req, res) => {
   });
 });
 
+app.post('/createEmployee', (req, res) => {
+  const { name, lastname, antiguedad, user, password, cargo, diasVacaciones } = req.body;
+
+  console.log(name + lastname + antiguedad + user + password  + cargo + diasVacaciones)
+  db.query('INSERT INTO `empleados`(`nombre_empleado`, `apellido_empleado`, `antiguedad`, `cant_dias_vacaciones`, `departamento`, `usuario`, `clave`) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    [name, lastname, antiguedad, diasVacaciones, cargo, user, password], (err, results) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Error en la consulta' });
+      }
+      if (results.affectedRows > 0) {
+        return res.json({ success: true, message: 'Empleado creado exitosamente' });
+      }
+      else { return res.status(400).json({ success: false, message: 'No se pudo crear el empleado' }); }
+    }
+  );
+});
+
+//admin
 app.post('/loginAdministrador', (req, res) => {
-  const user = req.body.user
-  const password = req.body.password
-  //const { user, password } = req.body;
+  const user = req.body.user;
+  const password = req.body.password;
   console.log("credenciales:" + user + password)
   db.query('SELECT * FROM administradores WHERE usuario = ? AND clave = ?', [user, password], (err, results) => {
     if (err) {

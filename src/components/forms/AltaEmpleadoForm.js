@@ -15,10 +15,30 @@ function AltaEmpleadoForm() {
     antiguedad: 0,
     user: '',
     password: '',
+    cargo:''
   };
   const [inputs, setInputs] = useState(inputValues);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  const cantidadLimite = () => {
+    let limiteDias = 0;
+    let antiguedad=inputs.antiguedad;
+    if (antiguedad > 20) {
+      limiteDias = 35;
+    }
+    else if (antiguedad > 10 && antiguedad <= 20) {
+      limiteDias = 28;
+    }
+    else if (antiguedad > 5 && antiguedad <= 10) {
+      limiteDias = 21;
+    }
+    else if (antiguedad > 1 && antiguedad <= 5) {
+      limiteDias = 14;
+    }
+    return limiteDias;
+  }
+
   const handleInputChange = (event) => {
     const { name, value } = event.target; setInputs({ ...inputs, [name]: value });
   };
@@ -52,6 +72,8 @@ function AltaEmpleadoForm() {
           antiguedad: inputs.antiguedad,
           user: inputs.user,
           password: inputs.password,
+          cargo: inputs.cargo,
+          diasVacaciones: cantidadLimite()
         });
       if (response.data.success) {
         alert('Se cargaron los datos exitosamente');
@@ -104,6 +126,17 @@ function AltaEmpleadoForm() {
           </label>
         </div>
         <div >
+          <label htmlFor='cargo'>Departamento:
+            <input
+              type="text"
+              name="cargo"
+              onChange={handleInputChange}
+              value={inputs.cargo}
+              required />
+          </label>
+        </div>
+        <div >
+        <div >
           <label htmlFor='user'>Nombre de usuario:
             <input
               type="text"
@@ -124,12 +157,9 @@ function AltaEmpleadoForm() {
               required />
           </label>
         </div>
-        <div >
           <button onClick={handleVolver} style={{margin:'1rem 3rem'}}>Volver</button>
           <button type="submit" value="Enviar" >Enviar</button>
         </div>
-
-
       </form>
 
     </div>
