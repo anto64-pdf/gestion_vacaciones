@@ -1,9 +1,10 @@
 .alta-empleado input[type='number'], 
 input[type='text'], 
-input[type='password']{
+input[type='password'], input[type='date']{
     width: 15rem;
     height: 3rem;
     margin: 1rem;
+    
 }
 .alta-empleado{
     background-color: lightpink;

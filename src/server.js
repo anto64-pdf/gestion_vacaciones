@@ -62,8 +62,8 @@ app.post('/createPetitionEmployee', (req, res) => {
 
 app.get('/listaPeticiones', (req, res) => {
   const body = req.body
-  db.query('SELECT empleados.nombre_empleado, empleados.apellido_empleado, peticiones.cant_dias, empleados.cant_dias_vacaciones ' +
-    'peticiones.id_peticion, peticiones.estado, peticiones.fecha_Inicio, peticiones.fecha_fin from empleados ' +
+  db.query('SELECT empleados.nombre_empleado, empleados.apellido_empleado, peticiones.cant_dias, ' +
+    'peticiones.id_peticion, peticiones.estado, peticiones.fecha_Inicio, peticiones.fecha_fin,empleados.cant_dias_vacaciones from empleados ' +
     'INNER JOIN empleados_peticiones ON empleados.id_empleado=empleados_peticiones.id_empleado ' +
     'INNER JOIN peticiones ON empleados_peticiones.id_peticion=peticiones.id_peticion', (err, results) => {
       if (err) {
@@ -81,17 +81,17 @@ app.get('/listaPeticiones', (req, res) => {
 
 
 app.post('/ModificarPeticion', (req, res) => {
-  const {peticionId, estado } = req.body
-  console.log('body:'+peticionId + estado)
+  const { peticionId, estado } = req.body
+  console.log('body:' + peticionId + estado)
   db.query('UPDATE peticiones SET estado=? WHERE `id_peticion`=?',
     [estado, peticionId], (err, results) => {
       if (err) {
         return res.status(500).json({ success: false, message: 'Error en la consulta' });
       }
-     
+
       if (results.affectedRows > 0) {
         console.log('Resultados de la actualización:', results);
-        return res.json({ success: true, message:'Update hecho correctamente'});
+        return res.json({ success: true, message: 'Update hecho correctamente' });
       } else {
         return res.json({ success: false, message: 'Credenciales incorrectas' });
       }
@@ -99,7 +99,7 @@ app.post('/ModificarPeticion', (req, res) => {
 });
 
 app.post('/EstadoPeticion', (req, res) => {
-  const {empleadoId } = req.body
+  const { empleadoId } = req.body
   console.log(empleadoId)
   db.query('SELECT empleados.nombre_empleado, empleados.apellido_empleado, peticiones.cant_dias, ' +
     'peticiones.id_peticion, peticiones.estado, peticiones.fecha_Inicio, peticiones.fecha_fin from empleados ' +
@@ -109,37 +109,15 @@ app.post('/EstadoPeticion', (req, res) => {
       if (err) {
         return res.status(500).json({ success: false, message: 'Error en la consulta' });
       }
-     
+
       if (results.length > 0) {
         console.log('Resultados de la actualización:', results);
-        return res.json({ success: true, peticiones:results});
+        return res.json({ success: true, peticiones: results });
       } else {
         return res.json({ success: false, message: 'Credenciales incorrectas' });
       }
     });
 });
-
-// app.post('/DiasRestantes', (req, res) => {
-//   const {empleadoId } = req.body
-//   const pendiente='pendiente', aceptada="Aceptada";
-//   console.log(empleadoId)
-//   db.query('SELECT SUM(peticiones.cant_dias) AS dias_restantes from peticiones '+
-//     'INNER JOIN empleados_peticiones ON peticiones.id_peticion=empleados_peticiones.id_peticion '+ 
-//     'INNER JOIN empleados on empleados_peticiones.id_empleado=empleados.id_empleado '+
-//     'WHERE empleados.id_empleado=? AND (peticiones.estado=? || peticiones.estado=?) '+
-//     [empleadoId, pendiente, aceptada], (err, results) => {
-//       if (err) {
-//         return res.status(500).json({ success: false, message: 'Error en la consulta' });
-//       }
-     
-//       if (results.length > 0) {
-//         console.log('Resultados de la actualización:', results);
-//         return res.json({ success: true, peticiones:results});
-//       } else {
-//         return res.json({ success: false, message: 'Credenciales incorrectas' });
-//       }
-//     });
-// });
 
 //empleados
 
@@ -177,20 +155,81 @@ app.get('/listaEmpleados', (req, res) => {
     }
   });
 });
+app.post('/DiasRestantesEmpleado', (req, res) => {
+  const { empleadoId } = req.body
+  console.log(empleadoId)
+  db.query('SELECT cant_dias_vacaciones FROM empleados WHERE id_empleado = ?', [empleadoId], (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.status(500).json({ success: false, message: 'Error en la consulta' });
+    }
+
+    if (results.length > 0) {
+      console.log(results[0])
+      return res.json({ success: true, dias: results[0] });
+    } else {
+      return res.json({ success: false, message: 'Credenciales incorrectas' });
+    }
+  });
+});
 
 app.post('/ModificarEmpleado', (req, res) => {
-  const { empleadoId, name, antiguedad, lastName, user, password } = req.body
-  console.log(empleadoId)
-  db.query('UPDATE empleados SET nombre_empleado=?, apellido_empleado=?, antiguedad=?,usuario=?, clave=?' +
+  const { empleadoId, name, ingreso, lastName, restoDias, user, password } = req.body
+  console.log(empleadoId+ ingreso, restoDias)
+  db.query('UPDATE empleados SET nombre_empleado=?, apellido_empleado=?, fecha_ingreso=?, cant_dias_vacaciones=?,usuario=?, clave=?' +
     ' WHERE id_empleado=?',
-    [name, lastName,antiguedad, user, password, empleadoId], (err, results) => {
+    [name, lastName, ingreso, restoDias, user, password, empleadoId], (err, results) => {
       if (err) {
         return res.status(500).json({ success: false, message: 'Error en la consulta' });
       }
 
       if (results.affectedRows > 0) {
 
-        return res.json({ success: true, message:'Actualizado correctamente'});
+        return res.json({ success: true, message: 'Actualizado correctamente' });
+      } else {
+        return res.json({ success: false, message: 'Credenciales incorrectas' });
+      }
+    });
+});
+
+
+app.post('/ModificarDiasRestantes', (req, res) => {
+  const { peticionId, DiasRestantes } = req.body
+  console.log('body:' + peticionId + DiasRestantes)
+  db.query('UPDATE empleados e ' +
+    'INNER JOIN empleados_peticiones ep ON e.id_empleado=ep.id_empleado ' +
+    'INNER JOIN peticiones p ON ep.id_peticion=p.id_peticion ' +
+    'SET e.cant_dias_vacaciones=? WHERE p.id_peticion=?',
+    [DiasRestantes, peticionId], (err, results) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Error en la consulta' });
+      }
+
+      if (results.affectedRows > 0) {
+        console.log('Resultados de la actualización:', results);
+        return res.json({ success: true, message: 'Update hecho correctamente' });
+      } else {
+        return res.json({ success: false, message: 'Credenciales incorrectas' });
+      }
+    });
+});
+
+app.post('/ExistenPedidosDepartemento', (req, res) => {
+  const { empleadoDepartamento } = req.body
+  let p='pendiente', a='Aceptada'
+  console.log('body:' + empleadoDepartamento)
+  db.query('SELECT peticiones.fecha_Inicio, peticiones.fecha_fin FROM `peticiones` '+ 
+'INNER JOIN empleados_peticiones ON peticiones.id_peticion=empleados_peticiones.id_peticion '+
+'INNER JOIN empleados ON empleados_peticiones.id_empleado=empleados.id_empleado '+
+'WHERE empleados.departamento=? AND (peticiones.estado=? || peticiones.estado=?)',
+    [empleadoDepartamento, p,a ], (err, results) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Error en la consulta' });
+      }
+
+      if (results.length > 0) {
+        console.log('Resultados de la actualización:', results);
+        return res.json({ success: true, fechas:results});
       } else {
         return res.json({ success: false, message: 'Credenciales incorrectas' });
       }
@@ -215,11 +254,10 @@ app.post('/EliminarEmpleado', (req, res) => {
 });
 
 app.post('/createEmployee', (req, res) => {
-  const { name, lastname, antiguedad, user, password, cargo, diasVacaciones } = req.body;
-
-  console.log(name + lastname + antiguedad + user + password  + cargo + diasVacaciones)
-  db.query('INSERT INTO `empleados`(`nombre_empleado`, `apellido_empleado`, `antiguedad`, `cant_dias_vacaciones`, `departamento`, `usuario`, `clave`) VALUES (?, ?, ?, ?, ?, ?, ?)',
-    [name, lastname, antiguedad, diasVacaciones, cargo, user, password], (err, results) => {
+  const { name, lastname, ingreso, user, password, cargo, diasVacaciones } = req.body;
+  console.log(name + lastname + ingreso + user + password + cargo + diasVacaciones)
+  db.query('INSERT INTO `empleados`(`nombre_empleado`, `apellido_empleado`, `cant_dias_vacaciones`, `departamento`, `usuario`, `clave`,`fecha_ingreso`) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    [name, lastname, diasVacaciones, cargo, user, password, ingreso], (err, results) => {
       if (err) {
         return res.status(500).json({ success: false, message: 'Error en la consulta' });
       }

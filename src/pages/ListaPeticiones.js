@@ -10,10 +10,34 @@ function ListaPeticiones() {
   }
   const [errorMessage, setErrorMessage] = useState('');
   const [lista, setLista] = useState([]);
+  let diasRestantes = 0, diasPedidos = 0;
   let selectedRowId = null
   let state = 'pendiente';
-  const handleDiasDisponibles=()=>{
-    
+
+  const handleDiasDisponibles = async () => {
+
+    if (!selectedRowId) {
+      alert('Por favor, selecciona una petición.');
+      return;
+    }
+    diasRestantes = diasRestantes - diasPedidos
+    console.log(diasRestantes)
+    try {
+      const { data } = await axios.post('http://localhost:3001/ModificarDiasRestantes', {
+        peticionId: selectedRowId,
+        DiasRestantes: diasRestantes
+      });
+      if (data.success) {
+        console.log('Se cambiaron los datos exitosamente');
+        selectedRowId = null;
+      } else {
+        console.log(data.message);
+
+      }
+    } catch (error) {
+      console.log('Error ');
+
+    }
   }
 
   useEffect(() => {
@@ -53,6 +77,9 @@ function ListaPeticiones() {
       });
       if (data.success) {
         console.log('Se eliminaron los datos exitosamente');
+        if (state == 'Aceptada') {
+          handleDiasDisponibles()
+        }
         selectedRowId = null;
         state = 'pendiente';
         handleLista()
@@ -64,6 +91,7 @@ function ListaPeticiones() {
       console.log('Error en la autenticación. Inténtalo de nuevo.');
 
     }
+
   }
   return (
     <div>
@@ -87,14 +115,15 @@ function ListaPeticiones() {
               <TableCell>{row.estado}</TableCell>
               <TableCell>{new Date(row.fecha_Inicio).toLocaleDateString()}</TableCell>
               <TableCell>{new Date(row.fecha_fin).toLocaleDateString()}</TableCell>
-              <TableCell>{row.cant_dias}</TableCell>
-              <TableCell>{row.cant_dias_vacaciones}</TableCell>
-            </TableRow>))}
+              <TableCell>{diasPedidos = row.cant_dias}</TableCell>
+              <TableCell>{diasRestantes = row.cant_dias_vacaciones}</TableCell>
+            </TableRow>
+          ))}
         </tbody>
       </table>
       <div style={{ margin: '1rem', padding: '2rem' }}>
         <button style={{ margin: '0 2rem' }} onClick={handleVolver}>Volver</button>
-        <button style={{ margin: '0 2rem' }} onClick={(e) => { e.stopPropagation(); state = 'Aceptada'; handlleUpdate(state) }} >Aceptar Peticion</button>
+        <button style={{ margin: '0 2rem' }} onClick={(e) => { e.stopPropagation(); state = 'Aceptada'; handlleUpdate() }} >Aceptar Peticion</button>
         <button onClick={(e) => { e.stopPropagation(); state = 'Rechazada'; handlleUpdate() }}>Negar Peticion</button>
       </div>
     </div>

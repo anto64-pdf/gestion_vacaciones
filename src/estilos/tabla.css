@@ -1,9 +1,9 @@
 table {
     border: 1px solid #e44164;
+    border-collapse: collapse;
  }
  tr, td, th{
     text-align: center;
     vertical-align: center;
     border: 1px solid #000;
-    border-collapse: collapse;
  }

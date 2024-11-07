@@ -1,76 +1,84 @@
-import * as React from 'react';
+import react, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import List from '@mui/material/List';
 import { FixedSizeList } from 'react-window';
 import { useNavigate } from "react-router-dom";
-function render() {
-  let user = JSON.parse(localStorage.getItem('user'));
-  const cantidadLimite = () => {
-    let limiteDias = 0;
-    if (user.antiguedad > 20) {
-      limiteDias = 35;
-    }
-    else if (user.antiguedad > 10 && user.antiguedad <= 20) {
-      limiteDias = 28;
-    }
-    else if (user.antiguedad > 5 && user.antiguedad <= 10) {
-      limiteDias = 21;
-    }
-    else if (user.antiguedad > 1 && user.antiguedad <= 5) {
-      limiteDias = 14;
-    }
-    return limiteDias;
-  }
-  return (
-    <List >
-      <ListItem style={{border:'black solid 1px'}}key={user.id_empleado} component="div" title='name'>
-        <ListItemText primary='Nombre: ' />
-        <ListItemText primary={user.nombre_empleado} />
-      </ListItem>
-      <ListItem style={{border:'black solid 1px'}}>
-        <ListItemText primary='Apellido: ' />
-        <ListItemText primary={user.apellido_empleado} />
-      </ListItem>
-      <ListItem style={{border:'black solid 1px'}}>
-        <ListItemText primary='Antiguedad: ' />
-        <ListItemText primary={user.antiguedad} />
-      </ListItem>
-      <ListItem style={{border:'black solid 1px'}}>
-        <ListItemText primary='Limite Vacaciones: ' />
-        <ListItemText primary={cantidadLimite()} />
-      </ListItem>
-      <ListItem style={{border:'black solid 1px'}}>
-        <ListItemText primary='Usuario: ' />
-        <ListItemText primary={user.usuario} />
-      </ListItem>
-      <ListItem style={{border:'black solid 1px'}}>
-        <ListItemText primary='Clave: ' />
-        <ListItemText primary={user.clave} />
-      </ListItem>
-    </List>
-  )
-}
+import axios from 'axios'
+import moment from 'moment';
+// function Render(diasRestantes) {
+//   let user = JSON.parse(localStorage.getItem('user'));
+
+//   return (
+
+//   )
+// }
 function DatosEmpleado() {
-  const navigate = useNavigate(); 
-  const handleVolver=()=>{
-    navigate('/MenuEmpleado'); 
+  const navigate = useNavigate();
+  let user = JSON.parse(localStorage.getItem('user'));
+  const handleVolver = () => {
+    navigate('/MenuEmpleado');
   }
+  const [diasRestantes, setDiasRestantes] = useState(0);
+  const DiasRestantes = async () => {
+    try {
+      const results = await axios.post('http://localhost:3001/DiasRestantesEmpleado', { empleadoId: user.id_empleado });
+      if (results.data.success) {
+        setDiasRestantes(results.data.dias.cant_dias_vacaciones);
+
+        console.log(diasRestantes)
+        console.log('Se cargaron los datos')
+      }
+      else {
+        console.log('Credenciales incorretas');
+      }
+    }
+    catch (error) {
+      console.error('Error en la autenticación:', error.message);
+    }
+  }
+  useEffect(() => {
+    DiasRestantes()
+  }, [])
+
+   let fechaIngreso = new Date(user.fecha_ingreso);
+   console.log(fechaIngreso)
+   let fechaActual = moment(new Date());
+   let antiguedad = fechaActual.diff(fechaIngreso, 'years');
+
+  const renderRow = ({ index, style }) => {
+    const data = [
+      { label: 'Nombre', value: user.nombre_empleado },
+      { label: 'Apellido', value: user.apellido_empleado },
+      { label: 'Antigüedad', value: antiguedad },
+      {label: 'Fecha Ingreso', value:new Date(user.fecha_ingreso).toLocaleDateString()},
+      { label: 'Limite Vacaciones', value: diasRestantes }, // Aquí muestras los días restantes
+      { label: 'Usuario', value: user.usuario },
+      { label: 'Clave', value: user.clave }
+    ];
+    
+    return (
+      <ListItem style={style} key={index}>
+        <ListItemText primary={`${data[index].label}:`} />
+        <ListItemText primary={data[index].value} />
+      </ListItem>
+    );
+  };
   return (
-    <div style={{backgroundColor:'lightpink', height:'30rem', width:'40rem', borderRadius:'20px'}}>
+    <div style={{ backgroundColor: 'lightpink', height: '30rem', width: '40rem', borderRadius: '20px' }}>
       <h1>Mis Datos</h1>
       <Box
-        sx={{ width: '100%', height: 200, maxWidth: 360, bgcolor: 'background.paper', border:'black solid 1px', margin:'20% auto', borderRadius:'10px' }}
+        sx={{ width: '100%', height: 200, maxWidth: 360, bgcolor: 'background.paper', border: 'black solid 1px', margin: '20% auto', borderRadius: '10px' }}
       >
         <FixedSizeList
           height={200}
           width={360}
           itemSize={46}
-          itemCount={1}
+          itemCount={6} 
           overscanCount={5}
         >
-          {render}
+         {renderRow}
         </FixedSizeList>
       </Box>
       <button onClick={handleVolver}>Volver</button>

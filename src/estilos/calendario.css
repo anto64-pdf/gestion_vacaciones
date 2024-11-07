@@ -1,0 +1,13 @@
+.calendar-fin, .calendar-inicio{
+    text-align: center;
+    background-color: white;
+    color: black;
+    font-family: 'Courier New', Courier, monospace;
+    border-radius: 10px;
+}
+.label-calendar-fin, .label-calendar-inicio{
+    width: 5em;
+    height: 3rem;
+   
+}
+

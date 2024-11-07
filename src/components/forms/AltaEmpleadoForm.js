@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import '../../estilos/altaform.css'
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
+import moment from 'moment';
 function AltaEmpleadoForm() {
-  let existe=false;
- 
+  let existe = false;
+
   const navigate = useNavigate();
   const handleVolver = () => {
     navigate('/MenuRRHH');
@@ -12,10 +13,10 @@ function AltaEmpleadoForm() {
   const inputValues = {
     name: '',
     lastName: '',
-    antiguedad: 0,
+    fechaIngreso: new Date(),
     user: '',
     password: '',
-    cargo:''
+    cargo: ''
   };
   const [inputs, setInputs] = useState(inputValues);
   const [loading, setLoading] = useState(false);
@@ -23,7 +24,9 @@ function AltaEmpleadoForm() {
 
   const cantidadLimite = () => {
     let limiteDias = 0;
-    let antiguedad=inputs.antiguedad;
+    let fecha_ingreso = inputs.fechaIngreso;
+    let fechaActual = moment(new Date());
+    let antiguedad = fechaActual.diff(fecha_ingreso, 'years');
     if (antiguedad > 20) {
       limiteDias = 35;
     }
@@ -33,7 +36,7 @@ function AltaEmpleadoForm() {
     else if (antiguedad > 5 && antiguedad <= 10) {
       limiteDias = 21;
     }
-    else if (antiguedad > 1 && antiguedad <= 5) {
+    else if (antiguedad >= 1 && antiguedad <= 5) {
       limiteDias = 14;
     }
     return limiteDias;
@@ -45,51 +48,52 @@ function AltaEmpleadoForm() {
   const handleSubmit = async (event) => {
     event.preventDefault(); setLoading(true);
     try {
-      const response = await axios.post('http://localhost:3001/loginEmpleado', 
+      const response = await axios.post('http://localhost:3001/loginEmpleado',
         { user: inputs.user, password: inputs.password });
       if (response.data.success) {
-        existe=true;
-        
+        alert('Ese usuario ya existe');
+        setInputs(inputValues)
       }
       else {
-        console.log('Credenciales incorrectas');
+        console.log('No existe ese usuario');
+        try {
+          const response = await axios.post('http://localhost:3001/createEmployee',
+            {
+              name: inputs.name,
+              lastname: inputs.lastName,
+              ingreso: inputs.fechaIngreso,
+              user: inputs.user,
+              password: inputs.password,
+              cargo: inputs.cargo,
+              diasVacaciones: cantidadLimite()
+            });
+          if (response.data.success) {
+            alert('Se cargaron los datos exitosamente');
+            setInputs(inputValues); // Resetear los inputs 
+          } else {
+            setErrorMessage(response.data.message || 'Error en la creación del empleado');
+
+          }
+        } catch (error) {
+          setErrorMessage('Error en la autenticación. Inténtalo de nuevo.');
+
+        }
+        finally {
+          setLoading(false);
+        }
+
       }
     }
     catch (error) {
       console.error('Error en la autenticación:', error.message);
     }
+  };
 
-    if(existe){
-      alert('Ese usuario ya existe');
-      setInputs(inputValues)
-    }
-    else{
-    try {
-      const response = await axios.post('http://localhost:3001/createEmployee',
-        {
-          name: inputs.name,
-          lastname: inputs.lastName,
-          antiguedad: inputs.antiguedad,
-          user: inputs.user,
-          password: inputs.password,
-          cargo: inputs.cargo,
-          diasVacaciones: cantidadLimite()
-        });
-      if (response.data.success) {
-        alert('Se cargaron los datos exitosamente');
-        setInputs(inputValues); // Resetear los inputs 
-      } else {
-        setErrorMessage(response.data.message || 'Error en la creación del empleado');
-
-      }
-    } catch (error) {
-      setErrorMessage('Error en la autenticación. Inténtalo de nuevo.');
-
-    }
-    finally {
-      setLoading(false);
-    }
-  }
+  const handleDateChange = (fecha) => {
+    setInputs({
+      ...inputs,
+      fechaIngreso: fecha.target.value
+    });
   };
   return (
     <div>
@@ -116,15 +120,17 @@ function AltaEmpleadoForm() {
           </label>
         </div>
         <div >
-          <label htmlFor='antiguedad'>Antiguedad:
+          <label htmlFor='ingreso'>Fecha Ingreso:
             <input
-              type="number"
-              name="antiguedad"
-              onChange={handleInputChange}
-              value={inputs.antiguedad}
+              type="date"
+              name="ingreso"
+              onChange={handleDateChange}
+              value={inputs.fechaIngreso}
+              style={{ textAlign: 'center' }}
               required />
           </label>
         </div>
+        {console.log(inputs.fechaIngreso)}
         <div >
           <label htmlFor='cargo'>Departamento:
             <input
@@ -136,28 +142,28 @@ function AltaEmpleadoForm() {
           </label>
         </div>
         <div >
-        <div >
-          <label htmlFor='user'>Nombre de usuario:
-            <input
-              type="text"
-              name="user"
-              onChange={handleInputChange}
-              value={inputs.user}
-              required />
-          </label>
-        </div>
-        <div >
-          <label htmlFor='password'>Contraseña:
-            <input
-              type="password"
-              name="password"
+          <div >
+            <label htmlFor='user'>Nombre de usuario:
+              <input
+                type="text"
+                name="user"
+                onChange={handleInputChange}
+                value={inputs.user}
+                required />
+            </label>
+          </div>
+          <div >
+            <label htmlFor='password'>Contraseña:
+              <input
+                type="password"
+                name="password"
 
-              onChange={handleInputChange}
-              value={inputs.password}
-              required />
-          </label>
-        </div>
-          <button onClick={handleVolver} style={{margin:'1rem 3rem'}}>Volver</button>
+                onChange={handleInputChange}
+                value={inputs.password}
+                required />
+            </label>
+          </div>
+          <button onClick={handleVolver} style={{ margin: '1rem 3rem' }}>Volver</button>
           <button type="submit" value="Enviar" >Enviar</button>
         </div>
       </form>

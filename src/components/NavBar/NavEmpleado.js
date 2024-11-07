@@ -19,7 +19,7 @@ function NavEmpleado() {
         <Toolbar>
           <Typography className='navBarName' variant='h6' component='div' sx={{ flexGrow: 1 }}>{user.nombre_empleado} {user.apellido_empleado}</Typography>
           <Box>
-            <Link to="/MenuEmpleado" preventScrollReset = {true}><Button color='inherit'>Inicio</Button></Link>
+            <Link to="/" preventScrollReset = {true}><Button color='inherit'>Cerrar sesion</Button></Link>
             <Link to="/DatosEmpleado" preventScrollReset = {true}><Button color='inherit'>Datos</Button></Link>
            <Link to="/PedidosEmpleado" preventScrollReset = {true}><Button color='inherit'>Pedido</Button></Link>   
             <Link to="/EstadoPedido" preventScrollReset = {true}><Button color='inherit'>Estado</Button></Link>
