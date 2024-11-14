@@ -3,6 +3,7 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
+import '../estilos/tabla.css'
 function ListaPeticiones() {
   const navigate = useNavigate();
   const handleVolver = () => {
@@ -95,7 +96,7 @@ function ListaPeticiones() {
   }
   return (
     <div>
-      <table style={{ backgroundColor: 'lightpink' }} className='tabla-peticiones'>
+      <table  className='tabla-peticiones'>
         <thead>
           <tr >
             <th>Nombre</th>

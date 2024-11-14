@@ -5,24 +5,25 @@ import ListItemText from '@mui/material/ListItemText';
 import List from '@mui/material/List';
 import { FixedSizeList } from 'react-window';
 import { useNavigate } from "react-router-dom";
+import '../estilos/datos.css'
 
 function render() {
   let user = JSON.parse(localStorage.getItem('user'));
   return (
-    <List >
-      <ListItem style={{border:'black solid 1px'}}key={user.id_empleado} component="div" title='name'>
+    <List className='lista'>
+      <ListItem key={user.id_empleado} component="div" title='name'>
         <ListItemText primary='Nombre: ' />
         <ListItemText primary={user.nombre_administrador} />
       </ListItem>
-      <ListItem style={{border:'black solid 1px'}}>
+      <ListItem >
         <ListItemText primary='Apellido: ' />
         <ListItemText primary={user.apellido_administrador} />
       </ListItem>
-      <ListItem style={{border:'black solid 1px'}}>
+      <ListItem >
         <ListItemText primary='Usuario: ' />
         <ListItemText primary={user.usuario} />
       </ListItem>
-      <ListItem style={{border:'black solid 1px'}}>
+      <ListItem>
         <ListItemText primary='Clave: ' />
         <ListItemText primary={user.clave} />
       </ListItem>
@@ -35,12 +36,12 @@ function DatosRRHH() {
     navigate('/MenuRRHH'); 
   }
   return (
-    <div style={{backgroundColor:'lightpink', height:'30rem', width:'40rem', borderRadius:'20px'}}>
+    <div className='container' >
       <h1>Mis Datos</h1>
-      <Box
-        sx={{ width: '100%', height: 200, maxWidth: 360, bgcolor: 'background.paper', border:'black solid 1px', margin:'20% auto', borderRadius:'10px' }}
-      >
+      <div   className='box-list' >
         <FixedSizeList
+        className='scroll'
+        style={{backgroundColor:'lightpink', borderRadius:'10px'}}
           height={200}
           width={360}
           itemSize={46}
@@ -49,7 +50,7 @@ function DatosRRHH() {
         >
           {render}
         </FixedSizeList>
-      </Box>
+      </div>
       <button onClick={handleVolver}>Volver</button>
     </div>
   )

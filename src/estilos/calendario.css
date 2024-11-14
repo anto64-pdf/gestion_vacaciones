@@ -1,3 +1,6 @@
+.calendario{
+    border-radius: 20px;
+}
 .calendar-fin, .calendar-inicio{
     text-align: center;
     background-color: white;

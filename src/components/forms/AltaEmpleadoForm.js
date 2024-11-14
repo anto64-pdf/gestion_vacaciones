@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import '../../estilos/altaform.css'
+import altastyle from '../../estilos/altaform.css'
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
 import moment from 'moment';

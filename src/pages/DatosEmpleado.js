@@ -7,13 +7,7 @@ import { FixedSizeList } from 'react-window';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios'
 import moment from 'moment';
-// function Render(diasRestantes) {
-//   let user = JSON.parse(localStorage.getItem('user'));
-
-//   return (
-
-//   )
-// }
+import empleadoDato from '../estilos/datos.css'
 function DatosEmpleado() {
   const navigate = useNavigate();
   let user = JSON.parse(localStorage.getItem('user'));
@@ -42,45 +36,50 @@ function DatosEmpleado() {
     DiasRestantes()
   }, [])
 
-   let fechaIngreso = new Date(user.fecha_ingreso);
-   console.log(fechaIngreso)
-   let fechaActual = moment(new Date());
-   let antiguedad = fechaActual.diff(fechaIngreso, 'years');
+  let fechaIngreso = new Date(user.fecha_ingreso);
+  console.log(fechaIngreso)
+  let fechaActual = moment(new Date());
+  let antiguedad = fechaActual.diff(fechaIngreso, 'years');
 
   const renderRow = ({ index, style }) => {
     const data = [
       { label: 'Nombre', value: user.nombre_empleado },
       { label: 'Apellido', value: user.apellido_empleado },
       { label: 'Antigüedad', value: antiguedad },
-      {label: 'Fecha Ingreso', value:new Date(user.fecha_ingreso).toLocaleDateString()},
+      { label: 'Fecha Ingreso', value: new Date(user.fecha_ingreso).toLocaleDateString() },
       { label: 'Limite Vacaciones', value: diasRestantes }, // Aquí muestras los días restantes
       { label: 'Usuario', value: user.usuario },
       { label: 'Clave', value: user.clave }
     ];
-    
+
     return (
-      <ListItem style={style} key={index}>
-        <ListItemText primary={`${data[index].label}:`} />
-        <ListItemText primary={data[index].value} />
-      </ListItem>
+      <div className='lista'>
+        <List >
+          <ListItem style={style} key={index}>
+            <ListItemText primary={`${data[index].label}:`} />
+            <ListItemText primary={data[index].value} />
+          </ListItem>
+        </List>
+      </div>
     );
   };
   return (
-    <div style={{ backgroundColor: 'lightpink', height: '30rem', width: '40rem', borderRadius: '20px' }}>
+    <div >
       <h1>Mis Datos</h1>
-      <Box
-        sx={{ width: '100%', height: 200, maxWidth: 360, bgcolor: 'background.paper', border: 'black solid 1px', margin: '20% auto', borderRadius: '10px' }}
+      <div className='contain'
+
       >
         <FixedSizeList
+          className='box-list'
           height={200}
           width={360}
           itemSize={46}
-          itemCount={6} 
+          itemCount={7}
           overscanCount={5}
         >
-         {renderRow}
+          {renderRow}
         </FixedSizeList>
-      </Box>
+      </div>
       <button onClick={handleVolver}>Volver</button>
     </div>
   )

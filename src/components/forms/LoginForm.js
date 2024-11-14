@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import 'semantic-ui-css/semantic.min.css';
-import '../../estilos/loginForm.css'
+import login from '../../estilos/loginForm.css'
 import axios from 'axios';
+import ReCAPTCHA from "react-google-recaptcha";
 function LoginForm({ onLoginSuccess }) {
 
   const inputValues = {
@@ -13,12 +14,13 @@ function LoginForm({ onLoginSuccess }) {
   const [loading, setLoading] = useState(false);
   const [inputs, setInputs] = useState(inputValues);
   const [errorMessage, setErrorMessage] = useState("");
-
+  const [captcha,setCaptcha]= useState(null);
 
   const handleInputChange = (event) => {
     const { name, type, value, checked } = event.target;
-    setInputs({ ...inputs, [event.target.name]: event.target.value, [name]: type === 'checkbox' ? checked : value, })
-   
+    setInputs({ ...inputs, [event.target.name]: event.target.value,  })
+    //[name]: type === 'checkbox' ? checked : value,
+
   }
 
 
@@ -28,7 +30,7 @@ function LoginForm({ onLoginSuccess }) {
     setLoading(true);
     if (inputs.rol == 'Empleado') {
       try {
-        const response = await axios.post('http://localhost:3001/loginEmpleado', 
+        const response = await axios.post('http://localhost:3001/loginEmpleado',
           { user: inputs.user, password: inputs.password });
         if (response.data.success) {
           console.log('Login exitoso');
@@ -55,8 +57,10 @@ function LoginForm({ onLoginSuccess }) {
           onLoginSuccess(response.data.user, inputs.rol);
           setErrorMessage("");
         }
-        else { console.log('Credenciales incorrectas'); 
-          setErrorMessage('Usuario o contraseña incorrectos'); }
+        else {
+          console.log('Credenciales incorrectas');
+          setErrorMessage('Usuario o contraseña incorrectos');
+        }
       }
       catch (error) {
         console.error('Error en la autenticación:', error.message);
@@ -102,7 +106,7 @@ function LoginForm({ onLoginSuccess }) {
             <option name='rol' value='RRHH' >RRHH</option>
           </select>
         </div>
-        <label>
+        {/* <label>
           <input
             name="checked"
             type="checkbox"
@@ -112,10 +116,16 @@ function LoginForm({ onLoginSuccess }) {
             required
           />{" "}
           Not a robot?
-        </label>
+        </label> */}
+        <ReCAPTCHA
+          sitekey="6LfBC34qAAAAAAgMnswt2Kxdx3QblE2ArwXvxavc"
+         onChange={(e)=>{setCaptcha(e)}}
+        
+          required
+        />,
         <div>
-          {errorMessage && (<div style={{color:'red'}}>{errorMessage}</div>)}
-          <button type="submit" value="Ingresar" >Ingresar</button>
+          {errorMessage && (<div style={{ color: 'red' }}>{errorMessage}</div>)}
+          <button type="submit" value="Ingresar" disabled={!captcha}>Ingresar</button>
         </div>
 
 

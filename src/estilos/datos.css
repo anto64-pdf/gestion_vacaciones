@@ -1,0 +1,82 @@
+body {
+    text-align: center;
+}
+.container h1{
+    color: white;
+    padding: 2rem;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+.container{
+    background-color: hwb(335 17% 55%);
+    height: 30rem;
+    width:40rem;
+    border-radius:20px;
+    color: hwb(335 17% 55%);
+
+}
+.contain{
+    background-color: #742b4a;
+    height: 30rem;
+    width:30rem;
+    border-radius:20px;
+    margin: auto;
+   display: flex;
+}
+
+.contain .lista {
+    background-color: lightpink;
+    color: #742b4a;
+}
+.container.lista {
+    background-color: lightpink;
+    color: #742b4a;
+}
+.contain .box-list{
+    background-color: lightpink;
+    border-radius: 10px;
+    align-items: center;
+    width: 30rem;
+    height: 15rem;
+    margin: auto;
+    align-items: center;
+    
+}
+.container .box-list{
+    background-color: lightpink;
+    border-radius: 10px;
+    align-items: center;
+    width: 30rem;
+    height: 15rem;
+    margin: 2rem auto;
+    
+}
+
+@media (max-width: 600px) {
+    .container .box-list {
+        width: 15rem;
+        height: 20rem;
+        margin: 1rem auto;
+
+    }
+
+    .container .lista {
+        width: 15rem;
+        margin: 20rem;
+    }
+    .container .scroll{
+        max-width: 15rem;
+        max-height: 20rem;
+    }
+    .container{
+        width: 25rem;
+        margin: 20rem;
+    }
+}
+.contain,.container button{
+    background-color: #742b4a;
+    border: 1px lightpink solid;
+    margin: 2rem;
+}
+.contain,.container button:hover{
+    background-color: #ce5f8d;
+}

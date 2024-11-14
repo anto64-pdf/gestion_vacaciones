@@ -5,7 +5,7 @@ import axios from 'axios'
 import { useNavigate } from "react-router-dom";
 import '../estilos/tabla.css'
 import moment from 'moment';
-
+import '../estilos/listaempleado.css'
 
 function ListadoEmpleados() {
   const navigate = useNavigate();
@@ -102,22 +102,27 @@ function ListadoEmpleados() {
     let fechaIngreso = new Date(fecha_ingreso);
    let fechaActual = moment(new Date());
     antiguedad = fechaActual.diff(fechaIngreso, 'years');
+    if(antiguedad==0) {
+      antiguedad='No llega al año'
+    }
   }
 
   const cantidadLimite = () => {
     let limiteDias=0
     if (antiguedad > 20) {
-      limiteDias = 35;
+      limiteDias = '35';
     }
     else if (antiguedad > 10 && antiguedad <= 20) {
-      limiteDias = 28;
+      limiteDias = '28';
     }
     else if (antiguedad > 5 && antiguedad <= 10) {
-      limiteDias = 21;
+      limiteDias = '21';
     }
     else if (antiguedad >= 1 && antiguedad <= 5) {
-      limiteDias = 14;
+      limiteDias = '14';
     }
+    
+ 
     return limiteDias;
   }
   const handleRowClick = (row) => {
@@ -133,7 +138,8 @@ function ListadoEmpleados() {
 
   return (
     <div>
-      <table style={{ backgroundColor: 'lightpink' }} className='tabla-peticiones'>
+      <h1>Listado Empleados</h1>
+      <table  className='tabla-empleados'>
         <thead >
           <tr>
             <th>Nombre</th>
@@ -156,8 +162,8 @@ function ListadoEmpleados() {
               <td >{row.cant_dias_vacaciones}</td>
               <td >{row.usuario}</td>
               <td >{row.clave}</td>
-              <button style={{ margin: '0 2rem' }} onClick={(e) => { e.stopPropagation(); setmostrarModif((prev) => !prev); setInputs(row) }}>Modificar usuario</button>
-              <button onClick={(e) => { e.stopPropagation(); handleEliminarUsuario(row.id_empleado); }}>Eliminar usuario</button>
+              <button style={{ margin: '0 2rem'}} onClick={(e) => { e.stopPropagation(); setmostrarModif((prev) => !prev); setInputs(row) }}>Modificar usuario</button>
+              <button  onClick={(e) => { e.stopPropagation(); handleEliminarUsuario(row.id_empleado); }}>Eliminar usuario</button>
             </tr>))
           }
         </tbody>
@@ -165,8 +171,8 @@ function ListadoEmpleados() {
 
       <div style={{ margin: '1rem', padding: '2rem' }}>
 
-        <button onClick={handleLista}>Ver lista</button>
-        <button style={{ margin: '0 2rem' }} onClick={handleVolver}>Volver</button>
+       
+        <button style={{ margin: '0 2rem',backgroundColor:'#742b4a', color:'white'}} onClick={handleVolver}>Volver</button>
       </div>
 
       <div>
@@ -232,7 +238,7 @@ function ListadoEmpleados() {
               </label>
             </div>
             <div >
-              <button type="submit" value="Enviar" >Enviar</button>
+              <button style={{backgroundColor:'#742b4a'}} type="submit" value="Enviar" >Enviar</button>
             </div>
 
 

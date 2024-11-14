@@ -1,9 +1,31 @@
+body{
+   text-align: center;
+}
+
 table {
+   text-align: center;
+   width: 50rem;
+   background-color: #d1809d;
     border: 1px solid #e44164;
-    border-collapse: collapse;
+    border-collapse: collapse; 
+ }
+ .tabla-empleados {
+   text-align: center;
+   width: 80rem;
+   background-color: #d1809d;
+    border: 1px solid #e44164;
+    border-collapse: collapse; 
  }
  tr, td, th{
+   height: 2rem;
     text-align: center;
     vertical-align: center;
     border: 1px solid #000;
+ }
+
+ @media (max-width: 600px) {
+   .table{
+      font-size: small;
+      width: 10rem;
+   }
  }

@@ -1,13 +1,21 @@
+
 .alta-empleado input[type='number'], 
 input[type='text'], 
 input[type='password'], input[type='date']{
     width: 15rem;
     height: 3rem;
-    margin: 1rem;
-    
+    margin: 1rem; 
+    border-radius: 10px;  
+}
+.alta-empleado label{
+    color: #742b4a;
 }
 .alta-empleado{
     background-color: lightpink;
     border-radius: 20px;
-    width: 100vh;
+    width: 100vh; 
+}
+.alta-empleado button{
+    background-color: #742b4a;;
+    color: white;
 }

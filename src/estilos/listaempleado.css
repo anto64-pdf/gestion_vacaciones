@@ -1,0 +1,10 @@
+.tabla-empleados button{
+  background-color: #742b4a;
+    color: white;
+}
+.tabla-empleados{
+    background-color: lightpink;
+}
+.tabla-empleados>th:hover{
+    background-color: #742b4a;
+}
